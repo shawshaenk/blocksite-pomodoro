@@ -2,7 +2,45 @@
     "manifest_version": 3, 
     "name": "Focus",
     "icons": {
-        "32": "icon32.png"
+        "32": "icons/target.png"
     },
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "background": {
+        "service_worker": "background.js",
+        "type": "module"
+    },
+    "action": {
+        "default_popup": "index.html"
+    },
+    "permissions": [
+        "scripting",
+        "storage"
+    ],
+    "host_permissions": [
+        "http://*/*",
+        "https://*/*"
+    ],
+    "content_scripts": [
+      {
+        "matches": [
+          "https://www.instagram.com/*"
+        ],
+        "css": [
+          "blocked/blocked.css"
+        ],
+        "js": [
+          "blocked/redirect.js"
+        ]
+      }
+    ],
+    "web_accessible_resources": [
+      {
+        "resources": [
+          "blocked/blocked.html"
+        ],
+        "matches": [
+          "https://www.instagram.com/*"
+        ]
+      }
+    ]
 }
