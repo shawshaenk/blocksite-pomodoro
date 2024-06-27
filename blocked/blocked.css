@@ -1,9 +1,25 @@
-* {
+#popup-container {
     font-family: "Inter";
     font-weight: bold;
     color: white;
+    text-align: center;
 }
-  
+
 body {
     background-color: #1e1e1e;
+}
+
+#icons {
+    font-size: 20vh;
+    margin: 0;
+    margin-bottom: 1vh;
+    margin-top: 20vh;
+}
+
+#blocked-text {
+    font-size: 6vh;
+}
+
+#quote {
+    font-size: 3vh;
 }

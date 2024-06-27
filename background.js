@@ -1,66 +1,109 @@
-let time = 20 * 60; // 20 minutes in seconds
 let timerInterval;
+let time = 20 * 60;
 let started = false;
 let paused = false;
+let working = true;
+let breakCheck = false;
+let urls = ["instagram.com", "tiktok.com"];
+chrome.storage.local.set({ time, started, paused, working, breakCheck, urls });
 
 function updateTimer() {
-    const minutes = Math.floor(time / 60);
-    const seconds = time % 60;
-    timerElement.textContent = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-    
     if (time > 0) {
         time--;
+        chrome.storage.local.set({ time });
     } else {
         clearInterval(timerInterval);
-    }
-}
-
-function startTimer() {
-    if(!started) {
-        timerInterval = setInterval(updateTimer, 1000); // Start the interval
-        started = true;
-        paused = false;
-        startButton.innerHTML = 'Start';
-        activity.innerHTML = 'Work';
-    }
-}
-
-function pauseTimer() {
-    if(!paused && started) {
-        clearInterval(timerInterval);
-        activity.innerHTML += '⏸';
-        startButton.innerHTML = 'Resume';
         started = false;
-        paused = true;
-    }
-}
-
-function resetTimer() {
-    clearInterval(timerInterval); // Clear any existing intervals
-    time = 20 * 60; // Reset time to 20 minutes
-    updateTimer(); // Immediately update the timer display
-    started = false;
-    paused = false;
-    startButton.innerHTML = 'Start';
-    activity.innerHTML = 'Work';
-}
-
-chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-    if (message.command === "start") {
-        startTimer();
-    } else if (message.command === "pause") {
-        pauseTimer();
-    } else if (message.command === "reset") {
-        resetTimer();
-    }
-});
-
-// Restore timer state from local storage if exists
-chrome.storage.local.get("timerTime", function(data) {
-    if (data.timerTime) {
-        time = data.timerTime;
-        if (time > 0 && started) {
-            timerInterval = setInterval(updateTimer, 1000);
+        paused = false;
+        if (working) {
+            breakCheck = true;
+            time = 5 * 60;
+        } else {
+            working = true;
+            breakCheck = false;
+            time = 20 * 60;
         }
+        chrome.storage.local.set({ time, started, paused, working, breakCheck });
+        sendNotification();
     }
+}
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === 'start') {
+        if (!started) {
+            timerInterval = setInterval(updateTimer, 1000);
+            started = true;
+            paused = false;
+            if (working && breakCheck && !paused) {
+                working = false;
+            }
+            chrome.storage.local.set({ started, paused, working, breakCheck });
+        }
+    } else if (request.action === 'pause') {
+        if (!paused && started) {
+            clearInterval(timerInterval);
+            started = false;
+            paused = true;
+            chrome.storage.local.set({ started, paused });
+        }
+    } else if (request.action === 'reset') {
+        clearInterval(timerInterval);
+        time = 20 * 60;
+        started = false;
+        paused = false;
+        working = true;
+        breakCheck = false;
+        chrome.storage.local.set({ time, started, paused, working, breakCheck });
+    } else if (request.action === 'workingOn') {
+        working = true;
+        breakCheck = true;
+        chrome.storage.local.set( { working, breakCheck } );
+    } else if (request.action === 'workingOff') {
+        working = false;
+        breakCheck = true;
+        chrome.storage.local.set( { working, breakCheck } );
+    } else if (request.action === 'getState') {
+        sendResponse({ time, started, paused, working, breakCheck });
+    } else if (request.action === "checkTabs") {
+        checkTabs();
+    }
+    return true; // Keep the message channel open for asynchronous response
 });
+
+function sendNotification() {
+    if (!breakCheck) {
+        chrome.notifications.create({
+            type: 'basic',
+            iconUrl: 'icons/target.png',
+            title: 'Work',
+            message: 'Your break is over! Press Start to work!'
+        });
+    } else {
+        chrome.notifications.create({
+            type: 'basic',
+            iconUrl: 'icons/target.png',
+            title: 'Break',
+            message: 'Press Start to start your break!'
+        });
+    }
+}
+
+// block sites in all tabs
+function checkTab(tab) {
+    const blockPage = chrome.runtime.getURL("blocked/blocked.html");
+    chrome.storage.local.get('urls', function(result) {
+        for (let i = 0; i < result.urls.length; i++) {
+            if (tab.url && tab.url.includes(result.urls[i])) {
+                chrome.tabs.update(tab.id, { url: blockPage });
+            }
+        }
+    });
+}
+
+function checkTabs() {
+    chrome.tabs.query({}, (tabs) => {
+      tabs.forEach((tab) => {
+        checkTab(tab);
+      });
+    });
+}

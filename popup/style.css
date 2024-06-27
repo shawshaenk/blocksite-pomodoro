@@ -1,0 +1,68 @@
+body {
+  background-color: #1e1e1e;
+}
+
+#popup-container {
+  font-family: "Inter";
+  font-weight: bold;
+  color: white;
+  height: 350px;
+  width: 250px;
+}
+
+#timer {
+  font-size: 15vh;
+  text-align: center;
+  margin: 0; /* Reset margin */
+  padding: 0; /* Reset padding */
+  margin-bottom: 2vh;
+  margin-top: 6vh;
+}
+
+.status {
+  min-width: 250px;
+  max-height: 5vh;
+  font-size: 4.5vh;
+  text-align: center;
+  margin: 0; /* Reset margin */
+  padding: 0; /* Reset padding */
+}
+
+#activity {
+  margin-bottom: 4vh;
+}
+
+#block-status {
+  margin-bottom: 7vh;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 12px;
+  width: 100%;
+}
+
+.control-button {
+  text-align: center;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 5vh;
+  color: white;
+  background-color: #303030;
+  border: none;
+  width: 200px;
+  height: 50px;
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
+
+.control-button:hover {
+  transform: scale(1.1);
+}
+
+#start-button.disabled {
+  opacity: 50%;
+  cursor: not-allowed;
+}

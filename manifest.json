@@ -10,11 +10,14 @@
         "type": "module"
     },
     "action": {
-        "default_popup": "index.html"
+        "default_popup": "popup/index.html"
     },
     "permissions": [
         "scripting",
-        "storage"
+        "storage",
+        "activeTab",
+        "notifications",
+        "tabs"
     ],
     "host_permissions": [
         "http://*/*",
@@ -23,13 +26,13 @@
     "content_scripts": [
       {
         "matches": [
-          "https://www.instagram.com/*"
+          "<all_urls>"
         ],
         "css": [
           "blocked/blocked.css"
         ],
         "js": [
-          "blocked/redirect.js"
+          "blocked/blocked.js"
         ]
       }
     ],
@@ -39,7 +42,7 @@
           "blocked/blocked.html"
         ],
         "matches": [
-          "https://www.instagram.com/*"
+          "<all_urls>"
         ]
       }
     ]
