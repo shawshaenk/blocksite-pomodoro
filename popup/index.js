@@ -21,7 +21,7 @@ async function runTimer() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', (event) => {
     let timer = setInterval(runTimer, 1000);
 });
 
@@ -34,7 +34,7 @@ function updateTimerDisplay(time) {
 function updateActivity(started, paused, working, breakCheck) {
     pauseButton.innerHTML = 'Pause';
     resetButton.innerHTML = 'Reset';
-    if (paused && !started) {
+    if (paused) {
         startButton.innerHTML = 'Resume';
         chrome.runtime.sendMessage({ action: 'checkTabs' });
         blockStatus.innerHTML = 'Blocking On'
