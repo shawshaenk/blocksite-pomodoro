@@ -1,11 +1,35 @@
 let timerInterval;
-let time = 20 * 60;
-let started = false;
-let paused = false;
-let working = true;
-let breakCheck = false;
-let urls = ["instagram.com", "tiktok.com"];
-chrome.storage.local.set({ time, started, paused, working, breakCheck, urls });
+let time;
+let started;
+let paused;
+let working;
+let breakCheck;
+let urls;
+
+chrome.storage.local.get(null, function(items) {
+    if (Object.keys(items).length === 0) {
+        time = 20 * 60;
+        started = false;
+        paused = false;
+        working = true;
+        breakCheck = false;
+        urls = ["instagram.com", "tiktok.com", "youtube.com"];
+        chrome.storage.local.set({ time, started, paused, working, breakCheck, urls });
+    } else {
+        chrome.storage.local.get(['time', 'started', 'paused', 'working', 'breakCheck', 'urls'], function(result) {
+            time = result.time;
+            started = result.started;
+            paused = result.paused;
+            working = result.working;
+            breakCheck = result.breakCheck;
+            urls = result.urls;
+        });
+    }
+});
+
+if (working) {
+    checkTabs();
+}
 
 function updateTimer() {
     if (time > 0) {
@@ -88,16 +112,39 @@ function sendNotification() {
     }
 }
 
+function updateBadge() {
+    if (started || paused) {
+        let pausedValue = '';
+        if (paused) {
+            pausedValue = '⏸';
+        }
+        if (time >= 60) {
+            const minutes = Math.floor(time / 60);
+            chrome.action.setBadgeText({ text: `${minutes < 10 ? '0' : ''}${minutes}${pausedValue}` });
+        } else {
+            const seconds = time % 60;
+            chrome.action.setBadgeText({ text: `:${seconds < 10 ? '0' : ''}${seconds}${pausedValue}` });
+        }
+        if (working) {
+            chrome.action.setBadgeBackgroundColor({ color: [255, 99, 71, 255] });
+        } else {
+            chrome.action.setBadgeBackgroundColor({ color: [127, 255, 212, 255] });
+        }
+    } else {
+        chrome.action.setBadgeText({ text: '' });
+    }
+}
+
+let badgeUpdater = setInterval(updateBadge, 1000);
+
 // block sites in all tabs
 function checkTab(tab) {
     const blockPage = chrome.runtime.getURL("blocked/blocked.html");
-    chrome.storage.local.get('urls', function(result) {
-        for (let i = 0; i < result.urls.length; i++) {
-            if (tab.url && tab.url.includes(result.urls[i])) {
-                chrome.tabs.update(tab.id, { url: blockPage });
-            }
+    for (let i = 0; i < urls.length; i++) {
+        if (tab.url && tab.url.includes(urls[i])) {
+            chrome.tabs.update(tab.id, { url: blockPage });
         }
-    });
+    }
 }
 
 function checkTabs() {

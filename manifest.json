@@ -7,7 +7,8 @@
     "version": "1.0.0",
     "background": {
         "service_worker": "background.js",
-        "type": "module"
+        "type": "module",
+        "persistent": true
     },
     "action": {
         "default_popup": "popup/index.html"

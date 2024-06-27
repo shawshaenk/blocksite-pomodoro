@@ -14,5 +14,5 @@ const findURL = function changeURL(urls) {
 };
 
 chrome.storage.local.get('urls', function(result) {
-    findURL(result.urls);d
+    findURL(result.urls);
 });
