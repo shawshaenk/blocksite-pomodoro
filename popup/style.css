@@ -62,7 +62,11 @@ body {
   transform: scale(1.1);
 }
 
-#start-button.disabled {
-  opacity: 50%;
+.control-button:disabled {
+  opacity: 75%;
   cursor: not-allowed;
+}
+
+.control-button:disabled:hover {
+  transform: none;
 }

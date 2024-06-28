@@ -165,6 +165,7 @@ function checkTabs() {
     });
 }
 
+checkTabs();
 
 function initializeScript() {
     initializeVariables(() => {

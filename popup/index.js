@@ -72,25 +72,45 @@ function buttonPressed() {
     chrome.runtime.sendMessage({ action: 'getState' }, (response) => {
         if (response) {
             updateActivity(response.started, response.paused, response.working, response.breakCheck)
+            disableButtons();
         }
     });
 }
 
 function startTimer() {
-    sendMessage('start')
+    sendMessage('start');
     buttonPressed();
 }
 
 function pauseTimer() {
-    sendMessage('pause')
+    sendMessage('pause');
     buttonPressed();
 }
 
 function resetTimer() {
-    sendMessage('reset')
+    sendMessage('reset');
     buttonPressed();
+}
+
+function disableButtons() {
+    chrome.storage.local.get(['started', 'paused'], function(result) {
+        if (result.started) {
+            startButton.disabled = true;
+            pauseButton.disabled = false;
+            resetButton.disabled = false;
+        } else if (result.paused) {
+            startButton.disabled = false;
+            pauseButton.disabled = true;
+            resetButton.disabled = false;
+        } else {
+            startButton.disabled = false;
+            pauseButton.disabled = true;
+            resetButton.disabled = true;
+        }
+    });
 }
 
 startButton.addEventListener('click', () => startTimer());
 pauseButton.addEventListener('click', () => pauseTimer());
 resetButton.addEventListener('click', () => resetTimer());
+disableButtons();
