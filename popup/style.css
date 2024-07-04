@@ -8,6 +8,7 @@ body {
   color: white;
   height: 350px;
   width: 250px;
+  position: relative;
 }
 
 #timer {
@@ -16,7 +17,7 @@ body {
   margin: 0; /* Reset margin */
   padding: 0; /* Reset padding */
   margin-bottom: 2vh;
-  margin-top: 6vh;
+  margin-top: 4vh;
 }
 
 .status {
@@ -26,14 +27,24 @@ body {
   text-align: center;
   margin: 0; /* Reset margin */
   padding: 0; /* Reset padding */
-}
-
-#activity {
   margin-bottom: 4vh;
 }
 
 #block-status {
-  margin-bottom: 7vh;
+  margin-bottom: 6vh;
+}
+
+#go-to-options {
+  position: absolute;
+  background-color: #303030;
+  border-radius: 7px;
+  color: white;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  position: absolute; /* Added for absolute positioning */
+  top: -5px; /* Adjust this value as needed */
+  z-index: 10; /* Ensure it stays on top */
 }
 
 .button-container {
@@ -49,11 +60,11 @@ body {
   border-radius: 10px;
   font-weight: bold;
   font-size: 5vh;
-  color: white;
   background-color: #303030;
+  color: white;
   border: none;
-  width: 200px;
-  height: 50px;
+  width: 80vw;
+  height: 12vh;
   transition: transform 0.2s ease;
   cursor: pointer;
 }

@@ -1,6 +1,7 @@
 {
     "manifest_version": 3, 
     "name": "Focus",
+    "options_page": "options/options.html",
     "icons": {
         "32": "icons/target.png",
         "64": "icons/target.png"

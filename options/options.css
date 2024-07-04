@@ -1,0 +1,89 @@
+* {
+    font-family: "Inter";
+    font-weight: bold;
+    color: white;
+}
+
+body {
+    background-color: #1e1e1e;
+    padding: 20px;
+    max-width: 600px;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+}
+
+p {
+    text-align: center;
+    font-size: 1vh;
+}
+
+form {
+    padding: 20px;
+    border-radius: 8px;
+    display: flex;
+    gap: 10px;
+}
+
+input[type="text"] {
+    background-color: #303030;
+    color: white;
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 16px;
+    box-sizing: border-box;
+    outline: none;
+    border: none;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    background-color: #303030;
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+    box-sizing: border-box;
+}
+
+label {
+    display: block;
+    margin: 20px 0 8px;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+#blocked-sites {
+    background: #242424;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.blocked-site {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid white;
+    align-items: center;
+}
+
+.blocked-site span {
+    font-size: 20px;
+    word-break: break-all;
+    flex: 1;
+}
+
+.blocked-site button {
+    background-color: #303030;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    padding: 7px 10px;
+}

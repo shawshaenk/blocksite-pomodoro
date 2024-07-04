@@ -6,26 +6,34 @@ let working;
 let breakCheck;
 let urls;
 let badgeUpdater;
+let cycle;
 let workTime = 20 * 60;
-let breakTime = 5 * 60;
+let shortBreakTime = 5 * 60;
+let longBreakTime = 15 * 60;
 
 function initializeVariables(callback) {
-    chrome.storage.local.get(['time', 'started', 'paused', 'working', 'breakCheck', 'urls'], function(items) {
+    chrome.storage.local.get(['time', 'started', 'paused', 'working', 'breakCheck', 'urls', 'cycle'], function(items) {
+        if (chrome.runtime.lastError) {
+            console.error(chrome.runtime.lastError.message);
+            return;
+        }
         if (Object.keys(items).length === 0) {
             time = workTime;
             started = false;
             paused = false;
             working = true;
             breakCheck = false;
-            urls = ["instagram.com", "tiktok.com", "youtube.com"];
-            chrome.storage.local.set({ time, started, paused, working, breakCheck, urls });
+            urls = [];
+            cycle = 1;
+            chrome.storage.local.set({ time, started, paused, working, breakCheck, urls, cycle });
         } else {
             time = items.time;
             started = items.started;
             paused = items.paused;
             working = items.working;
             breakCheck = items.breakCheck;
-            urls = items.urls;
+            cycle = items.cycle;
+            urls = items.urls || [];
         }
         callback();
     });
@@ -45,19 +53,29 @@ function updateTimer() {
         time--;
         chrome.storage.local.set({ time });
     } else {
-        clearInterval(timerInterval);
-        timerInterval = null;
+        clearIntervals();
         started = false;
         paused = false;
         if (working) {
+            working = false;
             breakCheck = true;
-            time = breakTime;
+            if (cycle === 4) {
+                time = longBreakTime;
+            } else {
+                time = shortBreakTime;
+            }
         } else {
+            if (cycle === 4) {
+                cycle = 1;
+            } else {
+                cycle += 1;
+            }
             working = true;
             breakCheck = false;
             time = workTime;
+            checkTabs();
         }
-        chrome.storage.local.set({ time, started, paused, working, breakCheck });
+        chrome.storage.local.set({ time, started, paused, working, breakCheck, cycle });
         sendNotification();
     }
 }
@@ -74,7 +92,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             chrome.storage.local.set({ started, paused, working, breakCheck });
         }
     } else if (request.action === 'pause') {
-        if (!paused) {
+        if (!paused && started) {
             clearInterval(timerInterval);
             timerInterval = null;
             started = false;
@@ -82,14 +100,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             chrome.storage.local.set({ started, paused });
         }
     } else if (request.action === 'reset') {
-        clearInterval(timerInterval);
-        timerInterval = null;
+        clearIntervals();
         time = workTime;
         started = false;
         paused = false;
         working = true;
         breakCheck = false;
-        chrome.storage.local.set({ time, started, paused, working, breakCheck });
+        cycle = 1;
+        chrome.storage.local.set({ time, started, paused, working, breakCheck, cycle });
     } else if (request.action === 'workingOn') {
         working = true;
         breakCheck = true;
@@ -99,7 +117,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         breakCheck = true;
         chrome.storage.local.set({ working, breakCheck });
     } else if (request.action === 'getState') {
-        sendResponse({ time, started, paused, working, breakCheck });
+        sendResponse({ time, started, paused, working, breakCheck, cycle });
     } else if (request.action === 'checkTabs') {
         checkTabs();
     }
@@ -145,13 +163,31 @@ function updateBadge() {
     }
 }
 
+function clearIntervals() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+    if (badgeUpdater) {
+        clearInterval(badgeUpdater);
+        badgeUpdater = null;
+    }
+    chrome.action.setBadgeText({ text: '' });
+}
+
 // Block sites in all tabs
 function checkTab(tab) {
+    if (!tab.url) return;
     chrome.storage.local.get('urls', function(result) {
+        if (chrome.runtime.lastError) {
+            console.error(chrome.runtime.lastError.message);
+            return;
+        }
         const blockPage = chrome.runtime.getURL("blocked/blocked.html");
-        for (let i = 0; i < result.urls.length; i++) {
-            if (tab.url && tab.url.includes(result.urls[i])) {
+        for (let url of result.urls) {
+            if (tab.url.includes(url)) {
                 chrome.tabs.update(tab.id, { url: blockPage });
+                break;
             }
         }
     });
@@ -172,11 +208,26 @@ function initializeScript() {
         if (started) {
             fireTimer();
         }
+        if (!badgeUpdater) {
+            badgeUpdater = setInterval(updateBadge, 1000);
+        }
     });
 }
 
 initializeScript();
 
+chrome.runtime.onSuspend.addListener(function() {
+    clearIntervals();
+});
+
 chrome.runtime.onStartup.addListener(() => {
     initializeScript();
+});
+
+chrome.runtime.onInstalled.addListener(function (object) {
+    if (chrome.runtime.openOptionsPage) {
+        chrome.runtime.openOptionsPage();
+    } else {
+    window.open(chrome.runtime.getURL('options.html'));
+    }
 });

@@ -3,21 +3,22 @@ const startButton = document.getElementById('start-button');
 const resetButton = document.getElementById('reset-button');
 const pauseButton = document.getElementById('pause-button');
 const activity = document.getElementById('activity');
-const blockStatus = document.getElementById('block-status')
+const blockStatus = document.getElementById('block-status');
+const cycleNum = document.getElementById('cycle-num');
 
 function sendMessage(action) {
     chrome.runtime.sendMessage({ action }, (response) => {
         if (response) {
             updateTimerDisplay(response.time);
-            updateActivity(response.started, response.paused, response.working);
+            updateActivity(result.started, result.paused, result.working, result.breakCheck, result.cycle);
         }
     });
 }
 
 async function runTimer() {
-    chrome.storage.local.get(['time', 'started', 'paused', 'working', 'breakCheck'], function(result) {
+    chrome.storage.local.get(['time', 'started', 'paused', 'working', 'breakCheck', 'cycle'], function(result) {
         updateTimerDisplay(result.time);
-        updateActivity(result.started, result.paused, result.working, result.breakCheck);
+        updateActivity(result.started, result.paused, result.working, result.breakCheck, result.cycle);
     });
 }
 
@@ -31,9 +32,10 @@ function updateTimerDisplay(time) {
     timerElement.textContent = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 }
 
-function updateActivity(started, paused, working, breakCheck) {
+function updateActivity(started, paused, working, breakCheck, cycle) {
     pauseButton.innerHTML = 'Pause';
     resetButton.innerHTML = 'Reset';
+    cycleNum.innerHTML = 'Cycle ' + cycle;
     if (paused) {
         startButton.innerHTML = 'Resume';
         chrome.runtime.sendMessage({ action: 'checkTabs' });
@@ -41,8 +43,12 @@ function updateActivity(started, paused, working, breakCheck) {
         if (working && !breakCheck) {
             activity.innerHTML = 'Work ⏸';
         } else {
-            activity.innerHTML = 'Break ⏸';
             sendMessage('workingOn');
+            if (cycle === 4) {
+                activity.innerHTML = 'Long Break ⏸';
+            } else {
+                activity.innerHTML = 'Short Break ⏸';
+            }
         }
     } else {
         startButton.innerHTML = 'Start';
@@ -56,11 +62,19 @@ function updateActivity(started, paused, working, breakCheck) {
             }
         } else {
             if (started) {
-                activity.innerHTML = 'Break ►';
-                blockStatus.innerHTML = 'Blocking Off'
                 sendMessage('workingOff');
+                if (cycle === 4) {
+                    activity.innerHTML = 'Long Break ►';
+                } else {
+                    activity.innerHTML = 'Short Break ►';
+                }
+                blockStatus.innerHTML = 'Blocking Off'
             } else {
-                activity.innerHTML = 'Break';
+                if (cycle === 4) {
+                    activity.innerHTML = 'Long Break';
+                } else {
+                    activity.innerHTML = 'Short Break';
+                }
                 chrome.runtime.sendMessage({ action: 'checkTabs' });
                 blockStatus.innerHTML = 'Blocking On'
             }
@@ -71,8 +85,7 @@ function updateActivity(started, paused, working, breakCheck) {
 function buttonPressed() {
     chrome.runtime.sendMessage({ action: 'getState' }, (response) => {
         if (response) {
-            updateActivity(response.started, response.paused, response.working, response.breakCheck)
-            disableButtons();
+            updateActivity(response.started, response.paused, response.working, response.breakCheck, response.cycle);
         }
     });
 }
@@ -92,25 +105,14 @@ function resetTimer() {
     buttonPressed();
 }
 
-function disableButtons() {
-    chrome.storage.local.get(['started', 'paused'], function(result) {
-        if (result.started) {
-            startButton.disabled = true;
-            pauseButton.disabled = false;
-            resetButton.disabled = false;
-        } else if (result.paused) {
-            startButton.disabled = false;
-            pauseButton.disabled = true;
-            resetButton.disabled = false;
-        } else {
-            startButton.disabled = false;
-            pauseButton.disabled = true;
-            resetButton.disabled = true;
-        }
-    });
-}
-
 startButton.addEventListener('click', () => startTimer());
 pauseButton.addEventListener('click', () => pauseTimer());
 resetButton.addEventListener('click', () => resetTimer());
-disableButtons();
+
+document.querySelector('#go-to-options').addEventListener('click', function() {
+    if (chrome.runtime.openOptionsPage) {
+      chrome.runtime.openOptionsPage();
+    } else {
+      window.open(chrome.runtime.getURL('options.html'));
+    }
+  });
