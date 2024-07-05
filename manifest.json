@@ -1,10 +1,11 @@
 {
     "manifest_version": 3, 
-    "name": "Focus",
+    "name": "BlockSite Pomodoro: Block Sites & Focus",
     "options_page": "options/options.html",
     "icons": {
-        "32": "icons/target.png",
-        "64": "icons/target.png"
+      "16": "icons/shieldpomodoro.png",
+      "48": "icons/shieldpomodoro.png",
+     "128": "icons/shieldpomodoro.png"
     },
     "version": "1.0.0",
     "background": {

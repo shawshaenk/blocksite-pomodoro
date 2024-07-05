@@ -57,7 +57,6 @@ function updateTimer() {
         started = false;
         paused = false;
         if (working) {
-            working = false;
             breakCheck = true;
             if (cycle === 4) {
                 time = longBreakTime;
@@ -73,9 +72,13 @@ function updateTimer() {
             working = true;
             breakCheck = false;
             time = workTime;
-            checkTabs();
         }
         chrome.storage.local.set({ time, started, paused, working, breakCheck, cycle });
+        chrome.storage.local.get('working', function(result) {
+            if (result.working) {
+                checkTabs();
+            }
+        });
         sendNotification();
     }
 }
@@ -183,9 +186,10 @@ function checkTab(tab) {
             console.error(chrome.runtime.lastError.message);
             return;
         }
+        let urls = result.urls;
         const blockPage = chrome.runtime.getURL("blocked/blocked.html");
-        for (let url of result.urls) {
-            if (tab.url.includes(url)) {
+        for (let i = 0; i < urls.length; i++) {
+            if (tab.url.includes(urls[i])) {
                 chrome.tabs.update(tab.id, { url: blockPage });
                 break;
             }
