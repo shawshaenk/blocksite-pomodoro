@@ -17,9 +17,7 @@
         "default_popup": "popup/index.html"
     },
     "permissions": [
-        "scripting",
         "storage",
-        "activeTab",
         "notifications",
         "tabs"
     ],

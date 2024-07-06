@@ -131,14 +131,14 @@ function sendNotification() {
     if (!breakCheck) {
         chrome.notifications.create({
             type: 'basic',
-            iconUrl: 'icons/target.png',
+            iconUrl: 'icons/tomatoshield128.png',
             title: 'Work',
             message: 'Your break is over! Press Start to work!'
         });
     } else {
         chrome.notifications.create({
             type: 'basic',
-            iconUrl: 'icons/target.png',
+            iconUrl: 'icons/tomatoshield128.png',
             title: 'Break',
             message: 'Press Start to start your break!'
         });
