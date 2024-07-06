@@ -3,11 +3,12 @@
     "name": "BlockSite Pomodoro: Block Sites & Focus",
     "options_page": "options/options.html",
     "icons": {
-      "16": "icons/shieldpomodoro.png",
-      "48": "icons/shieldpomodoro.png",
-     "128": "icons/shieldpomodoro.png"
+      "16": "icons/tomatoshield16.png",
+      "48": "icons/tomatoshield48.png",
+     "128": "icons/tomatoshield128.png"
     },
     "version": "1.0.0",
+    "description": "Stay focused & Boost productivity with a custom blocklist & pomodoro-based site blocking.",
     "background": {
         "service_worker": "background.js",
         "type": "module"
