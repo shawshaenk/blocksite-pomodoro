@@ -1,5 +1,5 @@
 
-![Small Promo Tile](https://github.com/shawshaenk/blocksite-pomodoro/assets/138606372/4b09b584-e7b4-4fd3-9cb0-fff26b3be8dc)
+![Marquee promo tile](https://github.com/shawshaenk/blocksite-pomodoro/assets/138606372/b5fc763b-28ea-47e5-8dee-d9d9764d4fa1)
 
 Stay focused & boost productivity with a custom blocklist & pomodoro-based site blocking.
 
