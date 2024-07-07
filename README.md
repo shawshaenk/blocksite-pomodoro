@@ -1,3 +1,6 @@
+
+![Small Promo Tile](https://github.com/shawshaenk/blocksite-pomodoro/assets/138606372/4b09b584-e7b4-4fd3-9cb0-fff26b3be8dc)
+
 Stay focused & boost productivity with a custom blocklist & pomodoro-based site blocking.
 
 The BlockSite Pomodoro extension is the perfect extension for staying productive and avoiding distractions while using the internet.
