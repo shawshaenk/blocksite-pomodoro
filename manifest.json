@@ -7,7 +7,7 @@
       "48": "icons/tomatoshield48.png",
      "128": "icons/tomatoshield128.png"
     },
-    "version": "1.0.0",
+    "version": "0.0.1",
     "description": "Stay focused & Boost productivity with a custom blocklist & pomodoro-based site blocking.",
     "background": {
         "service_worker": "background.js",
@@ -20,32 +20,5 @@
         "storage",
         "notifications",
         "tabs"
-    ],
-    "host_permissions": [
-        "http://*/*",
-        "https://*/*"
-    ],
-    "content_scripts": [
-      {
-        "matches": [
-          "<all_urls>"
-        ],
-        "css": [
-          "blocked/blocked.css"
-        ],
-        "js": [
-          "blocked/blocked.js"
-        ]
-      }
-    ],
-    "web_accessible_resources": [
-      {
-        "resources": [
-          "blocked/blocked.html"
-        ],
-        "matches": [
-          "<all_urls>"
-        ]
-      }
     ]
 }

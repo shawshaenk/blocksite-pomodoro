@@ -74,11 +74,7 @@ function updateTimer() {
             time = workTime;
         }
         chrome.storage.local.set({ time, started, paused, working, breakCheck, cycle });
-        chrome.storage.local.get('working', function(result) {
-            if (result.working) {
-                checkTabs();
-            }
-        });
+        checkTabs();
         sendNotification();
     }
 }
@@ -198,10 +194,14 @@ function checkTab(tab) {
 }
 
 function checkTabs() {
-    chrome.tabs.query({}, (tabs) => {
-        tabs.forEach((tab) => {
-            checkTab(tab);
-        });
+    chrome.storage.local.get('working', function(result) {
+        if (result.working) {
+            chrome.tabs.query({}, (tabs) => {
+                tabs.forEach((tab) => {
+                    checkTab(tab);
+                });
+            });
+        }
     });
 }
 
@@ -219,6 +219,10 @@ function initializeScript() {
 }
 
 initializeScript();
+
+chrome.tabs.onUpdated.addListener(function() {
+    checkTabs();
+  });
 
 chrome.runtime.onSuspend.addListener(function() {
     clearIntervals();
