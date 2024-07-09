@@ -72,12 +72,3 @@ body {
 .control-button:hover {
   transform: scale(1.1);
 }
-
-.control-button:disabled {
-  opacity: 75%;
-  cursor: not-allowed;
-}
-
-.control-button:disabled:hover {
-  transform: none;
-}

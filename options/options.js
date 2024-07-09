@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             urlInput.value = ""; // Clear the input field
+            chrome.runtime.sendMessage({ action: 'checkTabs' });
         }
     });
     
@@ -82,4 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(urls[i]);
         }
     });
+
+    chrome.runtime.sendMessage({ action: 'checkTabs' });
 });

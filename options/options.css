@@ -13,11 +13,12 @@ body {
 
 h1 {
     text-align: center;
+    font-size: 3vh;
 }
 
 p {
     text-align: center;
-    font-size: 1vh;
+    font-size: 1.1vh;
 }
 
 form {
@@ -33,7 +34,7 @@ input[type="text"] {
     flex: 1;
     padding: 10px;
     border-radius: 10px;
-    font-size: 16px;
+    font-size: 1.25vh;
     box-sizing: border-box;
     outline: none;
     border: none;
@@ -46,15 +47,15 @@ button {
     background-color: #303030;
     color: white;
     cursor: pointer;
-    font-size: 15px;
-    box-sizing: border-box;
+    font-size: 1.5vh;
+    /* box-sizing: border-box; */
 }
 
 label {
     display: block;
     margin: 20px 0 8px;
     font-weight: bold;
-    font-size: 20px;
+    font-size: 1vh;
 }
 
 #blocked-sites {
@@ -63,6 +64,10 @@ label {
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     margin-top: 20px;
+}
+
+#url-input {
+    padding-left: 15px;
 }
 
 .blocked-site {
@@ -74,16 +79,18 @@ label {
 }
 
 .blocked-site span {
-    font-size: 20px;
+    font-size: 1vh;
     word-break: break-all;
     flex: 1;
 }
 
 .blocked-site button {
+    font-size: 1vh;
     background-color: #303030;
     border: none;
-    border-radius: 10px;
+    border-radius: 7px;
     color: white;
     cursor: pointer;
-    padding: 7px 10px;
+    padding: 5px 10px;
+    padding-bottom: 1px;
 }
