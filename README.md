@@ -1,6 +1,8 @@
 
 ![Marquee promo tile](https://github.com/shawshaenk/blocksite-pomodoro/assets/138606372/b5fc763b-28ea-47e5-8dee-d9d9764d4fa1)
 
+Chrome Web Store Link: https://chromewebstore.google.com/detail/blocksite-pomodoro-block/jpiabnekfdohlhlkpcilboocofljiiml
+
 Stay focused & boost productivity with a custom blocklist & pomodoro-based site blocking.
 
 The BlockSite Pomodoro extension is the perfect extension for staying productive and avoiding distractions while using the internet.
