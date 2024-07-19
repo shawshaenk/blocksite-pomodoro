@@ -1,7 +1,12 @@
+@font-face{
+    font-family:'Inter-Bold';
+    src: url("../Inter-Bold.ttf");
+}
+
 * {
-    font-family: "Arial";
-    font-weight: bold;
+    font-family: "Inter-Bold";
     color: white;
+    font-weight: bold;
 }
 
 body {
@@ -16,6 +21,13 @@ h1 {
     font-size: 3vh;
 }
 
+h2 {
+    text-align: center;
+    font-size: 2vh;
+    margin-bottom: 0;
+    margin-top: 3vh;
+}
+
 p {
     text-align: center;
     font-size: 1.1vh;
@@ -26,6 +38,8 @@ form {
     border-radius: 8px;
     display: flex;
     gap: 10px;
+    justify-content: center;
+    align-items: center;
 }
 
 input[type="text"] {
@@ -34,7 +48,7 @@ input[type="text"] {
     flex: 1;
     padding: 10px;
     border-radius: 10px;
-    font-size: 1.25vh;
+    font-size: 1.1vh;
     box-sizing: border-box;
     outline: none;
     border: none;
@@ -55,7 +69,7 @@ label {
     display: block;
     margin: 20px 0 8px;
     font-weight: bold;
-    font-size: 1vh;
+    font-size: 1.2vh;
 }
 
 #blocked-sites {
@@ -63,11 +77,12 @@ label {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
+    /* margin-top: 20px; */
 }
 
 #url-input {
     padding-left: 15px;
+    font-size: 1.25vh;
 }
 
 .blocked-site {
@@ -79,7 +94,7 @@ label {
 }
 
 .blocked-site span {
-    font-size: 1vh;
+    font-size: 1.5vh;
     word-break: break-all;
     flex: 1;
 }
@@ -93,4 +108,27 @@ label {
     cursor: pointer;
     padding: 5px 10px;
     padding-bottom: 1px;
+}
+
+#timings {
+    text-align: center;
+}
+
+#timings-info {
+    margin-top: -1vh;
+    margin-bottom: -1vh;
+}
+
+.timing-customization {
+    background-color: #303030;
+    outline: none;
+    border: none;
+    border-radius: 10px;
+    height: 3vh;
+    width: 3vw;
+    text-align: center;
+}
+
+.timing-customization-label {
+    font-size: 1.5vh;
 }

@@ -1,6 +1,10 @@
+@font-face{
+    font-family:'Inter-Bold';
+    src: url("../Inter-Bold.ttf");
+}
+
 #popup-container {
-    font-family: "Arial";
-    font-weight: bold;
+    font-family: "Inter-Bold";
     color: white;
     text-align: center;
 }

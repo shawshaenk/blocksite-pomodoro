@@ -1,21 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
     const urlInput = document.getElementById('url-input');
+    const workValue = document.getElementById('work-time');
+    const shortBreakValue = document.getElementById('short-break-time');
+    const longBreakValue = document.getElementById('long-break-time');
 
     document.getElementById('block-form').addEventListener('submit', function(e) {
         e.preventDefault(); // Prevent the form from submitting the traditional way
 
         const urlValue = urlInput.value.trim();
-        console.log("Form submitted with URL:", urlValue);
 
         if (urlValue !== "") {
-            addBlockedSite(urlValue);
             chrome.storage.local.get('urls', function(result) {
-                if (chrome.runtime.lastError) {
-                    console.error("Error retrieving urls:", chrome.runtime.lastError.message);
-                    return;
-                }
-
-                let urls = result.urls || [];
+                let urls = result.urls;
                 let matchFound = false;
                 for (let i = 0; i < urls.length; i++) {
                     if (urls[i] === urlValue) {
@@ -25,22 +21,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (!matchFound) {
-                    console.log("URL not found in the list, adding:", urlValue);
+                    addBlockedSite(urlValue);
                     urls.push(urlValue);
-                    chrome.storage.local.set({ urls }, function() {
-                        if (chrome.runtime.lastError) {
-                            console.error("Error setting urls:", chrome.runtime.lastError.message);
-                        } else {
-                            console.log("URLs list updated successfully:", urls);
-                            console.log(urls);
-                        }
+                    chrome.storage.local.set({ urls }, () => {
+                        sendMessage({ urls });
                     });
-                } else {
-                    console.log("URL already exists in the list:", urlValue);
                 }
-                console.log("Updated URLs list:", urls);
             });
-
             urlInput.value = ""; // Clear the input field
             chrome.runtime.sendMessage({ action: 'checkTabs' });
         }
@@ -60,29 +47,58 @@ document.addEventListener('DOMContentLoaded', () => {
         deleteButton.addEventListener('click', () => {
             blockedSites.removeChild(siteDiv);
             chrome.storage.local.get('urls', function(result) {
-                let urls = result.urls || [];
+                let urls = result.urls;
                 for (let i = 0; i < urls.length; i++) {
                     if (urls[i] === url) {
                         urls.splice(i, 1);
                         break;
                     }
                 }
-                chrome.storage.local.set({ urls });
-            });            
+                chrome.storage.local.set({ urls }, () => {
+                    sendMessage({ urls });
+                });
+            });
         });
 
         siteDiv.appendChild(siteText);
         siteDiv.appendChild(deleteButton);
-        blockedSites.appendChild(siteDiv);
+        blockedSites.appendChild(siteDiv);     
     }
 
-    chrome.storage.local.get('urls', function(result) {
-        let urls = result.urls || [];
+    chrome.storage.local.get(['urls', 'workTime', 'shortBreakTime', 'longBreakTime'], function(result) {
+        let urls = result.urls;
         for (let i = 0; i < urls.length; i++) {
             addBlockedSite(urls[i]);
-            console.log(urls[i]);
         }
+
+        workValue.value = result.workTime / 60;
+        shortBreakValue.value = result.shortBreakTime / 60;
+        longBreakValue.value = result.longBreakTime / 60;
     });
+
+    workValue.addEventListener("input", function() {
+        chrome.storage.local.get('workTime', function(result) {
+            let workTime = result.workTime;
+            workTime = workValue.value * 60;
+            chrome.storage.local.set({ workTime });
+        });
+    })
+
+    shortBreakValue.addEventListener("input", function() {
+        chrome.storage.local.get('shortBreakTime', function(result) {
+            let shortBreakTime = result.shortBreakTime;
+            shortBreakTime = shortBreakValue.value * 60;
+            chrome.storage.local.set({ shortBreakTime });
+        });
+    })
+
+    longBreakValue.addEventListener("input", function() {
+        chrome.storage.local.get('longBreakTime', function(result) {
+            let longBreakTime = result.longBreakTime;
+            longBreakTime = longBreakValue.value * 60;
+            chrome.storage.local.set({ longBreakTime });
+        });
+    })
 
     chrome.runtime.sendMessage({ action: 'checkTabs' });
 });

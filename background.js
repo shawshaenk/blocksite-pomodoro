@@ -7,25 +7,28 @@ let breakCheck;
 let urls;
 let badgeUpdater;
 let cycle;
-let workTime = 20 * 60;
-let shortBreakTime = 5 * 60;
-let longBreakTime = 15 * 60;
+let workTime;
+let shortBreakTime;
+let longBreakTime;
 
 function initializeVariables(callback) {
-    chrome.storage.local.get(['time', 'started', 'paused', 'working', 'breakCheck', 'urls', 'cycle'], function(items) {
+    chrome.storage.local.get(['time', 'started', 'paused', 'working', 'breakCheck', 'urls', 'cycle', 'workTime', 'shortBreakTime', 'longBreakTime'], function(items) {
         if (chrome.runtime.lastError) {
             console.error(chrome.runtime.lastError.message);
             return;
         }
         if (Object.keys(items).length === 0) {
-            time = workTime;
             started = false;
             paused = false;
             working = true;
             breakCheck = false;
-            urls = [];
+            urls = ['youtube.com', 'instagram.com', 'facebook.com', 'twitter.com', 'netflix.com', 'reddit.com'];
             cycle = 1;
-            chrome.storage.local.set({ time, started, paused, working, breakCheck, urls, cycle });
+            workTime = 20 * 60;
+            shortBreakTime = 5 * 60;
+            longBreakTime = 15 * 60;
+            time = workTime;
+            chrome.storage.local.set({ time, started, paused, working, breakCheck, urls, cycle, workTime, shortBreakTime, longBreakTime });
         } else {
             time = items.time;
             started = items.started;
@@ -33,7 +36,10 @@ function initializeVariables(callback) {
             working = items.working;
             breakCheck = items.breakCheck;
             cycle = items.cycle;
-            urls = items.urls || [];
+            urls = items.urls;
+            workTime = items.workTime;
+            shortBreakTime = items.shortBreakTime;
+            longBreakTime = items.longBreakTime;
         }
         callback();
     });
@@ -49,46 +55,48 @@ function fireTimer() {
 }
 
 function updateTimer() {
-    if (time > 0) {
-        time--;
-        chrome.storage.local.set({ time });
-    } else {
-        clearIntervals();
-        started = false;
-        paused = false;
-        if (working) {
-            breakCheck = true;
-            if (cycle === 4) {
-                time = longBreakTime;
-            } else {
-                time = shortBreakTime;
-            }
+    chrome.storage.local.get(['workTime', 'shortBreakTime', 'longBreakTime'], function(result) {
+        if (time > 0) {
+            time--;
+            chrome.storage.local.set({ time });
         } else {
-            if (cycle === 4) {
-                cycle = 1;
+            clearIntervals();
+            started = false;
+            paused = false;
+            if (working) {
+                breakCheck = true;
+                if (cycle === 4) {
+                    time = result.longBreakTime;
+                } else {
+                    time = result.shortBreakTime;
+                }
             } else {
-                cycle += 1;
+                if (cycle === 4) {
+                    cycle = 1;
+                } else {
+                    cycle += 1;
+                }
+                working = true;
+                breakCheck = false;
+                time = result.workTime;
             }
-            working = true;
-            breakCheck = false;
-            time = workTime;
+            chrome.storage.local.set({ time, started, paused, working, breakCheck, cycle });
+            checkTabs();
+            sendNotification();
         }
-        chrome.storage.local.set({ time, started, paused, working, breakCheck, cycle });
-        checkTabs();
-        sendNotification();
-    }
+    });
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'start') {
         if (!started) {
-            fireTimer();
             started = true;
             paused = false;
             if (working && breakCheck && !paused) {
                 working = false;
             }
             chrome.storage.local.set({ started, paused, working, breakCheck });
+            fireTimer();
         }
     } else if (request.action === 'pause') {
         if (!paused && started) {
@@ -99,14 +107,18 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             chrome.storage.local.set({ started, paused });
         }
     } else if (request.action === 'reset') {
-        clearIntervals();
-        time = workTime;
-        started = false;
-        paused = false;
-        working = true;
-        breakCheck = false;
-        cycle = 1;
-        chrome.storage.local.set({ time, started, paused, working, breakCheck, cycle });
+        chrome.storage.local.get(['workTime'], function(result) {
+            clearIntervals();
+            time = result.workTime;
+            started = false;
+            paused = false;
+            working = true;
+            breakCheck = false;
+            cycle = 1;
+            chrome.storage.local.set({ time, started, paused, working, breakCheck, cycle }, () => {
+                sendResponse({ time, started, paused, working, breakCheck, cycle });
+            });
+        });
     } else if (request.action === 'workingOn') {
         working = true;
         breakCheck = true;

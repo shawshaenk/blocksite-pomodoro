@@ -1,10 +1,14 @@
+@font-face{
+  font-family:'Inter-Bold';
+  src: url("../Inter-Bold.ttf");
+}
+
 body {
   background-color: #1e1e1e;
 }
 
 #popup-container {
-  font-family: "Arial";
-  font-weight: bold;
+  font-family: "Inter-Bold";
   color: white;
   height: 350px;
   width: 250px;
@@ -51,7 +55,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 2.5vh;
   width: 100%;
 }
 
