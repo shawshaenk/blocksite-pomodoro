@@ -22,7 +22,7 @@ function initializeVariables(callback) {
             paused = false;
             working = true;
             breakCheck = false;
-            urls = ['youtube.com', 'instagram.com', 'facebook.com', 'twitter.com', 'netflix.com', 'reddit.com'];
+            urls = [];
             cycle = 1;
             workTime = 20 * 60;
             shortBreakTime = 5 * 60;

@@ -13,11 +13,12 @@ body {
     background-color: #1e1e1e;
 }
 
-#icons {
-    font-size: 20vh;
-    margin: 0;
-    margin-bottom: 1vh;
-    margin-top: 20vh;
+#icon {
+    width: 35vh;
+    height: 35vh;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 18vh;
 }
 
 #blocked-text {

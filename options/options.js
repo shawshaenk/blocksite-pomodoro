@@ -3,7 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const workValue = document.getElementById('work-time');
     const shortBreakValue = document.getElementById('short-break-time');
     const longBreakValue = document.getElementById('long-break-time');
-
+    const blockSwitch = document.getElementById('block-switch');
+    
     document.getElementById('block-form').addEventListener('submit', function(e) {
         e.preventDefault(); // Prevent the form from submitting the traditional way
 
@@ -101,4 +102,13 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     chrome.runtime.sendMessage({ action: 'checkTabs' });
+
+    checkbox.addEventListener('change', function() {
+        if (this.checked) {
+            strictBlocking = true;
+        } else {
+            strictBlocking = false;
+        }
+        chrome.storage.local.set({ strictBlocking })
+    });
 });
