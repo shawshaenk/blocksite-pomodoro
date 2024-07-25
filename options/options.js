@@ -24,9 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!matchFound) {
                     addBlockedSite(urlValue);
                     urls.push(urlValue);
-                    chrome.storage.local.set({ urls }, () => {
-                        sendMessage({ urls });
-                    });
+                    chrome.storage.local.set({ urls });
                 }
             });
             urlInput.value = ""; // Clear the input field
@@ -77,38 +75,62 @@ document.addEventListener('DOMContentLoaded', () => {
         longBreakValue.value = result.longBreakTime / 60;
     });
 
-    workValue.addEventListener("input", function() {
+    workValue.addEventListener("blur", function() {
         chrome.storage.local.get('workTime', function(result) {
             let workTime = result.workTime;
-            workTime = workValue.value * 60;
+            let value = workValue.value;
+            if (value.includes('.') || value <= 0) {
+                workValue.value = 20;
+                value = 20;
+            }
+            workTime = value * 60;
             chrome.storage.local.set({ workTime });
         });
     })
 
-    shortBreakValue.addEventListener("input", function() {
+    shortBreakValue.addEventListener("blur", function() {
         chrome.storage.local.get('shortBreakTime', function(result) {
             let shortBreakTime = result.shortBreakTime;
-            shortBreakTime = shortBreakValue.value * 60;
+            let value = shortBreakValue.value;
+            if (value.includes('.') || value <= 0) {
+                shortBreakValue.value = 5;
+                value = 5;
+            }
+            shortBreakTime = value * 60;
             chrome.storage.local.set({ shortBreakTime });
         });
     })
 
-    longBreakValue.addEventListener("input", function() {
+    longBreakValue.addEventListener("blur", function() {
         chrome.storage.local.get('longBreakTime', function(result) {
             let longBreakTime = result.longBreakTime;
-            longBreakTime = longBreakValue.value * 60;
+            let value = longBreakValue.value;
+            if (value.includes('.') || value <= 0) {
+                longBreakValue.value = 15;
+                value = 15;
+            }
+            longBreakTime = value * 60;
             chrome.storage.local.set({ longBreakTime });
         });
-    })
+    });
 
     chrome.runtime.sendMessage({ action: 'checkTabs' });
 
-    checkbox.addEventListener('change', function() {
-        if (this.checked) {
-            strictBlocking = true;
-        } else {
-            strictBlocking = false;
+    chrome.storage.local.get('strictBlocking', function(result) {
+        if (result) {
+            if (result.strictBlocking) {
+                blockSwitch.checked = true;
+            }
         }
-        chrome.storage.local.set({ strictBlocking })
+    });
+
+    blockSwitch.addEventListener('change', function() {
+        if (this.checked) {
+            let strictBlocking = true;
+            chrome.storage.local.set({ strictBlocking });
+        } else {
+            let strictBlocking = false;
+            chrome.storage.local.set({ strictBlocking });
+        }
     });
 });

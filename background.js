@@ -3,7 +3,8 @@ let time;
 let started;
 let paused;
 let working;
-let breakCheck;
+let blocking;
+let strictBlocking;
 let urls;
 let badgeUpdater;
 let cycle;
@@ -12,7 +13,7 @@ let shortBreakTime;
 let longBreakTime;
 
 function initializeVariables(callback) {
-    chrome.storage.local.get(['time', 'started', 'paused', 'working', 'breakCheck', 'urls', 'cycle', 'workTime', 'shortBreakTime', 'longBreakTime'], function(items) {
+    chrome.storage.local.get(['time', 'started', 'paused', 'working', 'blocking', 'strictBlocking', 'urls', 'cycle', 'workTime', 'shortBreakTime', 'longBreakTime'], function(items) {
         if (chrome.runtime.lastError) {
             console.error(chrome.runtime.lastError.message);
             return;
@@ -21,20 +22,22 @@ function initializeVariables(callback) {
             started = false;
             paused = false;
             working = true;
-            breakCheck = false;
+            blocking = false;
+            strictBlocking = false;
             urls = [];
             cycle = 1;
             workTime = 20 * 60;
             shortBreakTime = 5 * 60;
             longBreakTime = 15 * 60;
             time = workTime;
-            chrome.storage.local.set({ time, started, paused, working, breakCheck, urls, cycle, workTime, shortBreakTime, longBreakTime });
+            chrome.storage.local.set({ time, started, paused, working, blocking, strictBlocking, urls, cycle, workTime, shortBreakTime, longBreakTime });
         } else {
             time = items.time;
             started = items.started;
             paused = items.paused;
             working = items.working;
-            breakCheck = items.breakCheck;
+            blocking = items.blocking;
+            strictBlocking = items.strictBlocking;
             cycle = items.cycle;
             urls = items.urls;
             workTime = items.workTime;
@@ -64,12 +67,12 @@ function updateTimer() {
             started = false;
             paused = false;
             if (working) {
-                breakCheck = true;
                 if (cycle === 4) {
                     time = result.longBreakTime;
                 } else {
                     time = result.shortBreakTime;
                 }
+                working = false;
             } else {
                 if (cycle === 4) {
                     cycle = 1;
@@ -77,10 +80,10 @@ function updateTimer() {
                     cycle += 1;
                 }
                 working = true;
-                breakCheck = false;
+                blocking = true;
                 time = result.workTime;
             }
-            chrome.storage.local.set({ time, started, paused, working, breakCheck, cycle });
+            chrome.storage.local.set({ time, started, paused, working, blocking, cycle });
             checkTabs();
             sendNotification();
         }
@@ -92,10 +95,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (!started) {
             started = true;
             paused = false;
-            if (working && breakCheck && !paused) {
-                working = false;
-            }
-            chrome.storage.local.set({ started, paused, working, breakCheck });
+            // if (working && breakCheck && !paused) {
+            //     working = false;
+            // }
+            chrome.storage.local.set({ started, paused });
             fireTimer();
         }
     } else if (request.action === 'pause') {
@@ -107,36 +110,45 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             chrome.storage.local.set({ started, paused });
         }
     } else if (request.action === 'reset') {
-        chrome.storage.local.get(['workTime'], function(result) {
-            clearIntervals();
-            time = result.workTime;
-            started = false;
-            paused = false;
-            working = true;
-            breakCheck = false;
-            cycle = 1;
-            chrome.storage.local.set({ time, started, paused, working, breakCheck, cycle }, () => {
-                sendResponse({ time, started, paused, working, breakCheck, cycle });
-            });
+        chrome.storage.local.get(['workTime', 'strictBlocking'], function(result) {
+            if (result) {
+                clearIntervals();
+                working = true;
+                time = result.workTime;
+                started = false;
+                paused = false;
+                if (!result.strictBlocking) {
+                    blocking = false;
+                } else {
+                    blocking = true;
+                }
+                cycle = 1;
+                chrome.storage.local.set({ time, started, paused, working, blocking, cycle }, () => {
+                    sendResponse({ time, started, paused, working, blocking, cycle });
+                });
+            }
         });
+        return true;
+    } else if (request.action === 'blockingOn') {
+        blocking = true;
+        chrome.storage.local.set({ blocking });
+    } else if (request.action === 'blockingOff') {
+        blocking = false;
+        chrome.storage.local.set({ blocking });
     } else if (request.action === 'workingOn') {
         working = true;
-        breakCheck = true;
-        chrome.storage.local.set({ working, breakCheck });
+        chrome.storage.local.set({ working });
     } else if (request.action === 'workingOff') {
         working = false;
-        breakCheck = true;
-        chrome.storage.local.set({ working, breakCheck });
-    } else if (request.action === 'getState') {
-        sendResponse({ time, started, paused, working, breakCheck, cycle });
+        chrome.storage.local.set({ working })
     } else if (request.action === 'checkTabs') {
         checkTabs();
     }
-    return true; // Keep the message channel open for asynchronous response
+    return true;
 });
 
 function sendNotification() {
-    if (!breakCheck) {
+    if (working) {
         chrome.notifications.create({
             type: 'basic',
             iconUrl: 'icons/tomatoshield128.png',
@@ -206,8 +218,8 @@ function checkTab(tab) {
 }
 
 function checkTabs() {
-    chrome.storage.local.get('working', function(result) {
-        if (result.working) {
+    chrome.storage.local.get('blocking', function(result) {
+        if (result.blocking) {
             chrome.tabs.query({}, (tabs) => {
                 tabs.forEach((tab) => {
                     checkTab(tab);

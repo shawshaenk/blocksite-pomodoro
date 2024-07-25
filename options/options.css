@@ -116,7 +116,6 @@ label {
 
 #timings-info {
     margin-top: -1vh;
-    /* margin-bottom: -0.5vh; */
     font-size: 1.5vh;
 }
 
@@ -129,8 +128,9 @@ label {
     outline: none;
     border: none;
     border-radius: 10px;
-    height: 3vh;
-    width: 3vw;
+    min-height: 28px;
+    min-width: 60px;
+    max-width: 3vw;
     text-align: center;
 }
 
@@ -205,9 +205,17 @@ input:checked + .slider:before {
     transform: translateX(16px);
 }
 
+.toggle {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}
+
 .tooltip {
     position: relative;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
     margin-left: 10px;
 }
 
@@ -215,9 +223,11 @@ input:checked + .slider:before {
     background-color: #303030;
     border-radius: 50%;
     color: white;
-    display: inline-block;
+    display: inline-flex;
     height: 16px;
     width: 16px;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     cursor: pointer;
     margin-right: 0.5vh;
@@ -256,6 +266,11 @@ input:checked + .slider:before {
     opacity: 1;
 }
 
-.toggle {
-    display: inline-block;
+.switch {
+    margin-left: 2px;
+}
+
+#settings-info {
+    font-size: 1.5vh;
+    margin-bottom: 0;
 }

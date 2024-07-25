@@ -6,19 +6,12 @@ const activity = document.getElementById('activity');
 const blockStatus = document.getElementById('block-status');
 const cycleNum = document.getElementById('cycle-num');
 
-function sendMessage(action) {
-    chrome.runtime.sendMessage({ action }, (response, callback) => {
-        if (response) {
-            updateTimerDisplay(response.time);
-            updateActivity(response.started, response.paused, response.working, response.breakCheck, response.cycle);
-        }
-    });
-}
-
 async function runTimer() {
-    chrome.storage.local.get(['time', 'started', 'paused', 'working', 'breakCheck', 'cycle'], function(result) {
-        updateTimerDisplay(result.time);
-        updateActivity(result.started, result.paused, result.working, result.breakCheck, result.cycle);
+    chrome.storage.local.get(['time', 'started', 'paused', 'working', 'blocking', 'strictBlocking', 'cycle'], function(result) {
+        if (result) {
+            updateTimerDisplay(result.time);
+            updateActivity(result.started, result.paused, result.working, result.blocking, result.strictBlocking, result.cycle);
+        }
     });
 }
 
@@ -42,7 +35,7 @@ function updateTimerDisplay(time) {
     }
 }
 
-function updateActivity(started, paused, working, breakCheck, cycle) {
+function updateActivity(started, paused, working, blocking, strictBlocking, cycle) {
     resetButton.innerHTML = 'Reset';
     optionsButton.innerHTML = 'Options'
     cycleNum.innerHTML = 'Cycle ' + cycle
@@ -53,73 +46,70 @@ function updateActivity(started, paused, working, breakCheck, cycle) {
         startPauseButton.innerHTML = 'Pause';
     }
 
-    if (paused) {
-        chrome.runtime.sendMessage({ action: 'checkTabs' });
-        blockStatus.innerHTML = 'Blocking On'
-        if (working && !breakCheck) {
+    if (working) {
+        if (!started && !paused) {
+            activity.innerHTML = 'Work';
+            if (strictBlocking) {
+                chrome.runtime.sendMessage({ action: 'blockingOn' });
+            }
+        } else if (started) {
+            activity.innerHTML = 'Work ►';
+            chrome.runtime.sendMessage({ action: 'blockingOn' });
+        } else if (paused) {
             activity.innerHTML = 'Work ⏸';
-        } else {
-            sendMessage('workingOn');
-            if (cycle === 4) {
-                activity.innerHTML = 'Long Break ⏸';
-            } else {
-                activity.innerHTML = 'Short Break ⏸';
+            if (!strictBlocking) {
+                chrome.runtime.sendMessage({ action: 'blockingOff' });
             }
         }
-    } else {
-        if (working && !breakCheck) {
-            chrome.runtime.sendMessage({ action: 'checkTabs' });
-            blockStatus.innerHTML = 'Blocking On'
-            if (started) {
-                activity.innerHTML = 'Work ►';
-            } else {
-                activity.innerHTML = 'Work';
-                console.log(breakCheck);
+    } else if (!working) {
+        if (cycle === 4) {
+            if (!started && !paused) {
+                activity.innerHTML = 'Long Break';
+            } else if (started) {
+                activity.innerHTML = 'Long Break ►';
+                chrome.runtime.sendMessage({ action: 'blockingOff' });
+            } else if (paused) {
+                activity.innerHTML = 'Long Break ⏸';
+                if (strictBlocking) {
+                    chrome.runtime.sendMessage({ action: 'blockingOn' });
+                }
             }
         } else {
-            if (started) {
-                sendMessage('workingOff');
-                if (cycle === 4) {
-                    activity.innerHTML = 'Long Break ►';
-                } else {
-                    activity.innerHTML = 'Short Break ►';
+            if (!started && !paused) {
+                activity.innerHTML = 'Short Break';
+            } else if (started) {
+                activity.innerHTML = 'Short Break ►';
+                chrome.runtime.sendMessage({ action: 'blockingOff' });
+            } else if (paused) {
+                activity.innerHTML = 'Short Break ⏸';
+                if (strictBlocking) {
+                    chrome.runtime.sendMessage({ action: 'blockingOn' });
                 }
-                blockStatus.innerHTML = 'Blocking Off'
-            } else {
-                if (cycle === 4) {
-                    activity.innerHTML = 'Long Break';
-                } else {
-                    activity.innerHTML = 'Short Break';
-                    console.log(breakCheck);
-                }
-                chrome.runtime.sendMessage({ action: 'checkTabs' });
-                blockStatus.innerHTML = 'Blocking On'
             }
         }
     }
+
+    if (blocking) {
+        blockStatus.innerHTML = 'Blocking On'
+        chrome.runtime.sendMessage({ action: 'checkTabs' });
+    } else {
+        blockStatus.innerHTML = 'Blocking Off'
+    }
+    console.log(blocking);
 }
 
-// function buttonPressed() {
-//     chrome.runtime.sendMessage({ action: 'getState' }, (response) => {
-//         if (response) {
-//             updateTimerDisplay(response.time)
-//             updateActivity(response.started, response.paused, response.working, response.breakCheck, response.cycle);
-//         }
-//     });
-// }
-
 function startTimer() {
-    sendMessage('start');
+    chrome.runtime.sendMessage({ action: 'start' });
     startPauseButton.innerHTML = 'Pause';
 }
 
 function pauseTimer() {
-    sendMessage('pause');
+    chrome.runtime.sendMessage({ action: 'pause' });
     startPauseButton.innerHTML = 'Start';
 }
 
 function resetTimer() {
-    sendMessage('reset');
+    chrome.runtime.sendMessage({ action: 'reset' });
 }
 
 startPauseButton.addEventListener('click', function() {
