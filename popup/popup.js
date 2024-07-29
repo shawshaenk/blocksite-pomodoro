@@ -13,6 +13,7 @@ async function runTimer() {
             updateActivity(result.started, result.paused, result.working, result.blocking, result.strictBlocking, result.cycle);
         }
     });
+    return true;
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -120,6 +121,7 @@ startPauseButton.addEventListener('click', function() {
             startTimer();
         }
     });
+    return true;
 });
 resetButton.addEventListener('click', () => resetTimer());
 

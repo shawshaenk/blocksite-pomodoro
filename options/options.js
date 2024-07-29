@@ -53,10 +53,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         break;
                     }
                 }
-                chrome.storage.local.set({ urls }, () => {
-                    sendMessage({ urls });
-                });
+                chrome.storage.local.set({ urls });
             });
+            return true;
         });
 
         siteDiv.appendChild(siteText);

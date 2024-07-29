@@ -47,7 +47,7 @@ input[type="text"] {
     color: white;
     flex: 1;
     padding: 10px;
-    border-radius: 10px;
+    border-radius: 7px;
     font-size: 1.1vh;
     box-sizing: border-box;
     outline: none;
@@ -57,7 +57,7 @@ input[type="text"] {
 button {
     padding: 10px 20px;
     border: none;
-    border-radius: 10px;
+    border-radius: 7px;
     background-color: #303030;
     color: white;
     cursor: pointer;
@@ -87,7 +87,6 @@ label {
     display: flex;
     justify-content: space-between;
     padding: 8px 0;
-    border-bottom: 1px solid white;
     align-items: center;
 }
 
@@ -205,7 +204,7 @@ input:checked + .slider:before {
     transform: translateX(16px);
 }
 
-.toggle {
+.toggle-block {
     display: flex;
     align-items: center;
     text-align: center;
@@ -270,7 +269,7 @@ input:checked + .slider:before {
     margin-left: 2px;
 }
 
-#settings-info {
+#other-settings-info {
     font-size: 1.5vh;
     margin-bottom: 0;
 }
