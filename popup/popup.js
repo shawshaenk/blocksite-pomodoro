@@ -96,7 +96,6 @@ function updateActivity(started, paused, working, blocking, strictBlocking, cycl
     } else {
         blockStatus.innerHTML = 'Blocking Off'
     }
-    console.log(blocking);
 }
 
 function startTimer() {

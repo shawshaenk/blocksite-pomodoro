@@ -5,7 +5,9 @@ let paused;
 let working;
 let blocking;
 let strictBlocking;
-let urls;
+let whitelistMode;
+let blockedUrls;
+let whitelistedUrls;
 let badgeUpdater;
 let cycle;
 let workTime;
@@ -13,7 +15,7 @@ let shortBreakTime;
 let longBreakTime;
 
 function initializeVariables(callback) {
-    chrome.storage.local.get(['time', 'started', 'paused', 'working', 'blocking', 'strictBlocking', 'urls', 'cycle', 'workTime', 'shortBreakTime', 'longBreakTime'], function(items) {
+    chrome.storage.local.get(['time', 'started', 'paused', 'working', 'blocking', 'strictBlocking', 'whitelistMode', 'blockedUrls', 'whitelistedUrls', 'cycle', 'workTime', 'shortBreakTime', 'longBreakTime'], function(items) {
         if (chrome.runtime.lastError) {
             console.error(chrome.runtime.lastError.message);
             return;
@@ -24,13 +26,15 @@ function initializeVariables(callback) {
             working = true;
             blocking = false;
             strictBlocking = false;
-            urls = [];
+            whitelistMode = false;
+            blockedUrls = [];
+            whitelistedUrls = [];
             cycle = 1;
             workTime = 20 * 60;
             shortBreakTime = 5 * 60;
             longBreakTime = 15 * 60;
             time = workTime;
-            chrome.storage.local.set({ time, started, paused, working, blocking, strictBlocking, urls, cycle, workTime, shortBreakTime, longBreakTime });
+            chrome.storage.local.set({ time, started, paused, working, blocking, strictBlocking, whitelistMode, blockedUrls, whitelistedUrls, cycle, workTime, shortBreakTime, longBreakTime });
         } else {
             time = items.time;
             started = items.started;
@@ -38,8 +42,10 @@ function initializeVariables(callback) {
             working = items.working;
             blocking = items.blocking;
             strictBlocking = items.strictBlocking;
+            whitelistMode = items.whitelistMode;
             cycle = items.cycle;
-            urls = items.urls;
+            blockedUrls = items.blockedUrls;
+            whitelistedUrls = items.whitelistedUrls;
             workTime = items.workTime;
             shortBreakTime = items.shortBreakTime;
             longBreakTime = items.longBreakTime;
@@ -200,20 +206,30 @@ function clearIntervals() {
 // Block sites in all tabs
 function checkTab(tab) {
     if (!tab.url) return;
-    chrome.storage.local.get('urls', function(result) {
-        if (chrome.runtime.lastError) {
-            console.error(chrome.runtime.lastError.message);
-            return;
-        }
-        let urls = result.urls;
-        const blockPage = chrome.runtime.getURL("blocked/blocked.html");
-        for (let i = 0; i < urls.length; i++) {
-            if (tab.url.includes(urls[i])) {
+    chrome.storage.local.get(['whitelistMode', 'blockedUrls', 'whitelistedUrls'], function(result) {
+        if (!result.whitelistMode) {
+            let blockedUrls = result.blockedUrls;
+            const blockPage = chrome.runtime.getURL("blocked/blocked.html");
+            for (let i = 0; i < blockedUrls.length; i++) {
+                if (tab.url.includes(blockedUrls[i])) {
+                    chrome.tabs.update(tab.id, { url: blockPage });
+                    break;
+                }
+            }
+        } else {
+            let whitelistedUrls = result.whitelistedUrls;
+            let blockTab = true;
+            const blockPage = chrome.runtime.getURL("blocked/blocked.html");
+            for (let i = 0; i < whitelistedUrls.length; i++) {
+                if (tab.url.includes(whitelistedUrls[i])) {
+                    blockTab = false;
+                }
+            }
+            if (blockTab && !tab.url.startsWith('chrome://') && !tab.url.startsWith('chrome-extension://')) {
                 chrome.tabs.update(tab.id, { url: blockPage });
-                break;
             }
         }
-    });
+    })
 }
 
 function checkTabs() {

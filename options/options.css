@@ -18,19 +18,19 @@ body {
 
 h1 {
     text-align: center;
-    font-size: 3vh;
+    font-size: 27px;
 }
 
 h2 {
     text-align: center;
-    font-size: 2vh;
+    font-size: 20px;
     margin-bottom: 0;
-    margin-top: 2vh;
+    margin-top: 30px;
 }
 
 p {
     text-align: center;
-    font-size: 1.1vh;
+    font-size: 15px;
 }
 
 form {
@@ -48,7 +48,7 @@ input[type="text"] {
     flex: 1;
     padding: 10px;
     border-radius: 7px;
-    font-size: 1.1vh;
+    font-size: 12px;
     box-sizing: border-box;
     outline: none;
     border: none;
@@ -61,17 +61,17 @@ button {
     background-color: #303030;
     color: white;
     cursor: pointer;
-    font-size: 1.5vh;
+    font-size: 12px;
 }
 
 label {
     display: block;
     margin: 20px 0 8px;
     font-weight: bold;
-    font-size: 1.2vh;
+    font-size: 10px;
 }
 
-#blocked-sites {
+.site-lists {
     background: #242424;
     padding: 20px;
     border-radius: 8px;
@@ -80,23 +80,24 @@ label {
 
 #url-input {
     padding-left: 15px;
-    font-size: 1.25vh;
+    font-size: 10px;
 }
 
-.blocked-site {
+.blocked-site, .whitelisted-site {
     display: flex;
     justify-content: space-between;
     padding: 8px 0;
     align-items: center;
 }
 
-.blocked-site span {
-    font-size: 1.5vh;
+.blocked-site span, .whitelisted-site span {
+    font-size: 15px;
     word-break: break-all;
-    flex: 1;
+    flex-grow: 1;
+    margin-right: 10px;
 }
 
-.blocked-site button {
+.blocked-site button, .whitelisted-site button {
     font-size: 1vh;
     background-color: #303030;
     border: none;
@@ -104,7 +105,8 @@ label {
     color: white;
     cursor: pointer;
     padding: 5px 10px;
-    padding-bottom: 1px;
+    padding-bottom: 3px;
+    margin-left: 10px;
 }
 
 
@@ -114,12 +116,12 @@ label {
 }
 
 #timings-info {
-    margin-top: -1vh;
-    font-size: 1.5vh;
+    margin-top: -10px;
+    font-size: 12.5px;
 }
 
 #timings-title {
-    margin-top: 4vh;
+    margin-top: 40px;
 }
 
 .timing-customization {
@@ -129,7 +131,7 @@ label {
     border-radius: 10px;
     min-height: 28px;
     min-width: 60px;
-    max-width: 3vw;
+    max-width: 20px;
     text-align: center;
 }
 
@@ -140,7 +142,7 @@ label {
 }
 
 .timing-customization-label {
-    font-size: 1.5vh;
+    font-size: 15px;
 }
 
 /* blocking part */
@@ -151,12 +153,12 @@ label {
     border-radius: 5px;
     justify-content: center; /* Center horizontally */
     color: white; /* White text color for contrast */
-    margin-top: -1vh;
+    margin-top: -10px;
 }
 
-#block-switch-label {
-    margin-right: 0.5vw;
-    font-size: 1.5vh;
+.switch-label {
+    margin-right: 7px;
+    font-size: 15px;
 }
 
 .switch {
@@ -229,7 +231,7 @@ input:checked + .slider:before {
     justify-content: center;
     text-align: center;
     cursor: pointer;
-    margin-right: 0.5vh;
+    margin-right: 8px;
 }
 
 .tooltip-text {
@@ -270,6 +272,6 @@ input:checked + .slider:before {
 }
 
 #other-settings-info {
-    font-size: 1.5vh;
+    font-size: 12.5 px;
     margin-bottom: 0;
 }

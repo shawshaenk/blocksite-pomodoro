@@ -1,33 +1,53 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const urlInput = document.getElementById('url-input');
+    //Initialize Options Page
+    const blockInput = document.getElementById('block-url-input');
+    const whitelistInput = document.getElementById('whitelist-url-input');
     const workValue = document.getElementById('work-time');
     const shortBreakValue = document.getElementById('short-break-time');
     const longBreakValue = document.getElementById('long-break-time');
     const blockSwitch = document.getElementById('block-switch');
-    
+    const whitelistSwitch = document.getElementById('whitelist-switch');
+
+    chrome.storage.local.get(['blockedUrls', 'whitelistedUrls', 'workTime', 'shortBreakTime', 'longBreakTime'], function(result) {
+        let blockedUrls = result.blockedUrls;
+        for (let i = 0; i < blockedUrls.length; i++) {
+            addBlockedSite(blockedUrls[i]);
+        }
+
+        let whitelistedUrls = result.whitelistedUrls;
+        for (let i = 0; i < whitelistedUrls.length; i++) {
+            addWhitelistedSite(whitelistedUrls[i]);
+        }
+
+        workValue.value = result.workTime / 60;
+        shortBreakValue.value = result.shortBreakTime / 60;
+        longBreakValue.value = result.longBreakTime / 60;
+    });
+
+    //Block Sites Code
     document.getElementById('block-form').addEventListener('submit', function(e) {
         e.preventDefault(); // Prevent the form from submitting the traditional way
 
-        const urlValue = urlInput.value.trim();
+        const blockValue = blockInput.value.trim();
 
-        if (urlValue !== "") {
-            chrome.storage.local.get('urls', function(result) {
-                let urls = result.urls;
+        if (blockValue !== "") {
+            chrome.storage.local.get('blockedUrls', function(result) {
+                let blockedUrls = result.blockedUrls;
                 let matchFound = false;
-                for (let i = 0; i < urls.length; i++) {
-                    if (urls[i] === urlValue) {
+                for (let i = 0; i < blockedUrls.length; i++) {
+                    if (blockedUrls[i] === blockValue) {
                         matchFound = true;
                         break;
                     }
                 }
 
                 if (!matchFound) {
-                    addBlockedSite(urlValue);
-                    urls.push(urlValue);
-                    chrome.storage.local.set({ urls });
+                    addBlockedSite(blockValue);
+                    blockedUrls.push(blockValue);
+                    chrome.storage.local.set({ blockedUrls });
                 }
             });
-            urlInput.value = ""; // Clear the input field
+            blockInput.value = ""; // Clear the input field
             chrome.runtime.sendMessage({ action: 'checkTabs' });
         }
     });
@@ -45,15 +65,15 @@ document.addEventListener('DOMContentLoaded', () => {
         deleteButton.textContent = '✕';
         deleteButton.addEventListener('click', () => {
             blockedSites.removeChild(siteDiv);
-            chrome.storage.local.get('urls', function(result) {
-                let urls = result.urls;
-                for (let i = 0; i < urls.length; i++) {
-                    if (urls[i] === url) {
-                        urls.splice(i, 1);
+            chrome.storage.local.get('blockedUrls', function(result) {
+                let blockedUrls = result.blockedUrls;
+                for (let i = 0; i < blockedUrls.length; i++) {
+                    if (blockedUrls[i] === url) {
+                        blockedUrls.splice(i, 1);
                         break;
                     }
                 }
-                chrome.storage.local.set({ urls });
+                chrome.storage.local.set({ blockedUrls });
             });
             return true;
         });
@@ -63,17 +83,66 @@ document.addEventListener('DOMContentLoaded', () => {
         blockedSites.appendChild(siteDiv);     
     }
 
-    chrome.storage.local.get(['urls', 'workTime', 'shortBreakTime', 'longBreakTime'], function(result) {
-        let urls = result.urls;
-        for (let i = 0; i < urls.length; i++) {
-            addBlockedSite(urls[i]);
+    // Whitelist Sites Code
+    document.getElementById('whitelist-form').addEventListener('submit', function(e) {
+        e.preventDefault(); // Prevent the form from submitting the traditional way
+
+        const whitelistValue = whitelistInput.value.trim();
+
+        if (whitelistValue !== "") {
+            chrome.storage.local.get('whitelistedUrls', function(result) {
+                let whitelistedUrls = result.whitelistedUrls;
+                let matchFound = false;
+                for (let i = 0; i < whitelistedUrls.length; i++) {
+                    if (whitelistedUrls[i] === whitelistValue) {
+                        matchFound = true;
+                        break;
+                    }
+                }
+
+                if (!matchFound) {
+                    addWhitelistedSite(whitelistValue);
+                    whitelistedUrls.push(whitelistValue);
+                    chrome.storage.local.set({ whitelistedUrls });
+                }
+            });
+            whitelistInput.value = ""; // Clear the input field
+            chrome.runtime.sendMessage({ action: 'checkTabs' });
         }
-
-        workValue.value = result.workTime / 60;
-        shortBreakValue.value = result.shortBreakTime / 60;
-        longBreakValue.value = result.longBreakTime / 60;
     });
+    
+    function addWhitelistedSite(url) {
+        const whitelistedSites = document.getElementById('whitelisted-sites');
 
+        const siteDiv = document.createElement('div');
+        siteDiv.className = 'whitelisted-site';
+
+        const siteText = document.createElement('span');
+        siteText.textContent = url;
+
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = '✕';
+        deleteButton.addEventListener('click', () => {
+            whitelistedSites.removeChild(siteDiv);
+            chrome.storage.local.get('whitelistedUrls', function(result) {
+                let whitelistedUrls = result.whitelistedUrls;
+                for (let i = 0; i < whitelistedUrls.length; i++) {
+                    if (whitelistedUrls[i] === url) {
+                        whitelistedUrls.splice(i, 1);
+                        break;
+                    }
+                }
+                chrome.storage.local.set({ whitelistedUrls });
+            });
+            return true;
+        });
+
+        siteDiv.appendChild(siteText);
+        siteDiv.appendChild(deleteButton);
+        whitelistedSites.appendChild(siteDiv);     
+    }
+
+    // Timings Customization Code
     workValue.addEventListener("blur", function() {
         chrome.storage.local.get('workTime', function(result) {
             let workTime = result.workTime;
@@ -113,12 +182,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    chrome.runtime.sendMessage({ action: 'checkTabs' });
-
-    chrome.storage.local.get('strictBlocking', function(result) {
+    // Other Settings Code
+    chrome.storage.local.get(['strictBlocking', 'whitelistMode'], function(result) {
         if (result) {
             if (result.strictBlocking) {
                 blockSwitch.checked = true;
+            }
+            if (result.whitelistMode) {
+                whitelistSwitch.checked = true;
             }
         }
     });
@@ -132,4 +203,16 @@ document.addEventListener('DOMContentLoaded', () => {
             chrome.storage.local.set({ strictBlocking });
         }
     });
+
+    whitelistSwitch.addEventListener('change', function() {
+        if (this.checked) {
+            let whitelistMode = true;
+            chrome.storage.local.set({ whitelistMode });
+        } else {
+            let whitelistMode = false;
+            chrome.storage.local.set({ whitelistMode });
+        }
+    });
+
+    chrome.runtime.sendMessage({ action: 'checkTabs' });
 });

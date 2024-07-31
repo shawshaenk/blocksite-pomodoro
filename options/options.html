@@ -10,10 +10,17 @@
     <h1>Options</h1>
     <h2>Block Sites</h2>
     <form id="block-form">
-        <input type="text" id="url-input" placeholder="Enter a web address (ex: youtube.com)" autocomplete="off">
+        <input type="text" id="block-url-input" placeholder="Enter a web address (ex: youtube.com)" autocomplete="off">
         <button type="submit">+</button>
     </form>
-    <div id="blocked-sites"></div>
+    <div class="site-lists" id="blocked-sites"></div>
+
+    <h2>Whitelist Sites</h2>
+    <form id="whitelist-form">
+        <input type="text" id="whitelist-url-input" placeholder="Enter a web address (ex: youtube.com)" autocomplete="off">
+        <button type="submit">+</button>
+    </form>
+    <div class="site-lists" id="whitelisted-sites"></div>
 
     <h2 id="timings-title">Customize Timings</h2>
     <form>
@@ -42,9 +49,22 @@
             <span class="tooltip-text">Enable Blocking Outside of Focus Sessions (Only Unblock During Breaks)</span>
         </span>
         
-        <label for="block-switch" id="block-switch-label">Strict Blocking</label>
+        <label class="switch-label" for="block-switch">Strict Blocking</label>
         <label class="switch">
             <input id="block-switch" type="checkbox">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <div class="toggle-block">
+        <span class="tooltip">
+            <span class="tooltip-icon">i</span>
+            <span class="tooltip-text">Switch to Whitelist Mode (Block Every Site Except those in Whitelist)</span>
+        </span>
+        
+        <label class="switch-label" for="whitelist-switch">Whitelist Mode</label>
+        <label class="switch">
+            <input id="whitelist-switch" type="checkbox">
             <span class="slider"></span>
         </label>
     </div>
