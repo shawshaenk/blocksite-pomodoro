@@ -22,26 +22,14 @@
     </form>
     <div class="site-lists" id="whitelisted-sites"></div>
 
-    <h2 id="timings-title">Customize Timings</h2>
-    <form>
-        <div id="timings">
-            <p id="timings-info">Press reset to apply new timings</p>
-            <div class="time-block">
-                <label for="work-time" class="timing-customization-label">Work Time:</label>
-                <input type="number" class="timing-customization" id="work-time" name="work-time" min="1" step="1">
-            </div>
-            <div class="time-block">
-                <label for="short-break-time" class="timing-customization-label">Short Break Time:</label>
-                <input type="number" class="timing-customization" id="short-break-time" name="short-break-time" min="1" step="1">
-            </div>
-            <div class="time-block">
-                <label for="long-break-time" class="timing-customization-label">Long Break Time:</label>
-                <input type="number" class="timing-customization" id="long-break-time" name="long-break-time" min="1" step="1">
-            </div>
-        </div>
+    <h2>Exceptions</h2>
+    <form id="exceptions-form">
+        <input type="text" id="exceptions-url-input" placeholder="Enter a web address (ex: youtube.com)" autocomplete="off">
+        <button type="submit">+</button>
     </form>
+    <div class="site-lists" id="excepted-sites"></div>
     
-    <h2>Other Settings</h2>
+    <h2>Settings</h2>
     <p id="other-settings-info">Press reset to apply settings</p>
     <div class="toggle-block">
         <span class="tooltip">
@@ -68,6 +56,25 @@
             <span class="slider"></span>
         </label>
     </div>
+
+    <h2 id="timings-title">Customize Timings</h2>
+    <form>
+        <div id="timings">
+            <p id="timings-info">Press reset to apply new timings</p>
+            <div class="time-block">
+                <label for="work-time" class="timing-customization-label">Work Time:</label>
+                <input type="number" class="timing-customization" id="work-time" name="work-time" min="1" step="1">
+            </div>
+            <div class="time-block">
+                <label for="short-break-time" class="timing-customization-label">Short Break Time:</label>
+                <input type="number" class="timing-customization" id="short-break-time" name="short-break-time" min="1" step="1">
+            </div>
+            <div class="time-block">
+                <label for="long-break-time" class="timing-customization-label">Long Break Time:</label>
+                <input type="number" class="timing-customization" id="long-break-time" name="long-break-time" min="1" step="1">
+            </div>
+        </div>
+    </form>
 
     <script src="options.js"></script>
 </body>

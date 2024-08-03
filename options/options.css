@@ -71,6 +71,11 @@ label {
     font-size: 10px;
 }
 
+#url-input {
+    padding-left: 15px;
+    font-size: 10px;
+}
+
 .site-lists {
     background: #242424;
     padding: 20px;
@@ -78,26 +83,21 @@ label {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-#url-input {
-    padding-left: 15px;
-    font-size: 10px;
-}
-
-.blocked-site, .whitelisted-site {
+.blocked-site, .whitelisted-site, .excepted-site {
     display: flex;
     justify-content: space-between;
-    padding: 8px 0;
     align-items: center;
+    padding: 8px 0;
 }
 
-.blocked-site span, .whitelisted-site span {
+.blocked-site span, .whitelisted-site span, .excepted-site span {
     font-size: 15px;
     word-break: break-all;
     flex-grow: 1;
     margin-right: 10px;
 }
 
-.blocked-site button, .whitelisted-site button {
+.blocked-site button, .whitelisted-site button, .excepted-site button {
     font-size: 1vh;
     background-color: #303030;
     border: none;
@@ -107,8 +107,8 @@ label {
     padding: 5px 10px;
     padding-bottom: 3px;
     margin-left: 10px;
+    flex-shrink: 0;
 }
-
 
 /* timings part */
 #timings {
@@ -116,8 +116,9 @@ label {
 }
 
 #timings-info {
-    margin-top: -10px;
-    font-size: 12.5px;
+    margin-top: -8px;
+    margin-bottom: 8px;
+    font-size: 14px;
 }
 
 #timings-title {
@@ -272,6 +273,6 @@ input:checked + .slider:before {
 }
 
 #other-settings-info {
-    font-size: 12.5 px;
+    font-size: 14px;
     margin-bottom: 0;
 }
