@@ -123,6 +123,7 @@ label {
 
 #timings-title {
     margin-top: 40px;
+    margin-bottom: -10px;
 }
 
 .timing-customization {
@@ -270,6 +271,14 @@ input:checked + .slider:before {
 
 .switch {
     margin-left: 2px;
+}
+
+#apply-settings-button {
+    display: block;
+    margin: 20px auto;
+    font-size: 15px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 #other-settings-info {

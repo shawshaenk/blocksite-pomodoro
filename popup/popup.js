@@ -122,7 +122,10 @@ startPauseButton.addEventListener('click', function() {
     });
     return true;
 });
-resetButton.addEventListener('click', () => resetTimer());
+resetButton.addEventListener('click', () => {
+    resetTimer();
+    runTimer();
+});
 
 document.querySelector('#options-button').addEventListener('click', function() {
     if (chrome.runtime.openOptionsPage) {

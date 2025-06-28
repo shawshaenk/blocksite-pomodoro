@@ -18,20 +18,21 @@ let longBreakTime;
 
 function initializeVariables(callback) {
     chrome.storage.local.get(['time', 'started', 'paused', 'working', 'blocking', 'strictBlocking', 'whitelistMode', 'blockedUrls', 'whitelistedUrls', 'exceptedUrls', 'urls', 'cycle', 'workTime', 'shortBreakTime', 'longBreakTime'], function(items) {
-        time = items.time || workTime;
-        started = items.started || false;
-        paused = items.paused || false;
-        working = items.working || true;
-        blocking = items.blocking || false;
-        strictBlocking = items.strictBlocking || false;
-        whitelistMode = items.whitelistMode || false;
-        cycle = items.cycle || 1;
-        blockedUrls = items.blockedUrls || items.urls || [];
-        whitelistedUrls = items.whitelistedUrls || [];
-        exceptedUrls = items.exceptedUrls || [];
-        workTime = items.workTime || 20;
-        shortBreakTime = items.shortBreakTime || 5;
-        longBreakTime = items.longBreakTime || 15;
+        workTime = items.workTime ?? 20 * 60;
+        shortBreakTime = items.shortBreakTime ?? 5 * 60;
+        longBreakTime = items.longBreakTime ?? 15 * 60;
+        
+        time = items.time ?? workTime;
+        started = items.started ?? false;
+        paused = items.paused ?? false;
+        working = items.working ?? true;
+        blocking = items.blocking ?? false;
+        strictBlocking = items.strictBlocking ?? false;
+        whitelistMode = items.whitelistMode ?? false;
+        cycle = items.cycle ?? 1;
+        blockedUrls = items.blockedUrls ?? items.urls ?? [];
+        whitelistedUrls = items.whitelistedUrls ?? [];
+        exceptedUrls = items.exceptedUrls ?? [];
         chrome.storage.local.set({ time, started, paused, working, blocking, strictBlocking, whitelistMode, blockedUrls, whitelistedUrls, exceptedUrls, urls, cycle, workTime, shortBreakTime, longBreakTime });
         callback();
     });

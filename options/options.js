@@ -211,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
         chrome.storage.local.get('workTime', function(result) {
             let workTime = result.workTime;
             let value = workValue.value;
-            if (value.includes('.') || value <= 0) {
+            if (value > 180 || value.includes('.') || value <= 0) {
                 workValue.value = 20;
                 value = 20;
             }
@@ -276,6 +276,16 @@ document.addEventListener('DOMContentLoaded', () => {
             let whitelistMode = false;
             chrome.storage.local.set({ whitelistMode });
         }
+    });
+
+    document.getElementById("apply-settings-button").addEventListener("click", function () {
+        chrome.runtime.sendMessage({ action: "reset" });
+    
+        const button = this;
+        button.textContent = "Apply Settings  ✔";
+        setTimeout(() => {
+            button.textContent = "Apply Settings";
+        }, 2000);
     });
 
     chrome.runtime.sendMessage({ action: 'checkTabs' });
