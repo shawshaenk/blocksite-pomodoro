@@ -1,7 +1,7 @@
 
 ![Marquee promo tile](https://github.com/shawshaenk/blocksite-pomodoro/assets/138606372/b5fc763b-28ea-47e5-8dee-d9d9764d4fa1)
 
-<a href="https://www.producthunt.com/products/blocksite-pomodoro?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-blocksite&#0045;pomodoro" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=474605&theme=light&t=1751128284776" alt="BlockSite&#0032;Pomodoro - Block&#0032;sites&#0032;&#0038;&#0032;start&#0032;focusing | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+<a href="https://www.producthunt.com/products/blocksite-pomodoro?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-blocksite&#0045;pomodoro" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=474605&theme=dark&t=1751128328849" alt="BlockSite&#0032;Pomodoro - Block&#0032;sites&#0032;&#0038;&#0032;start&#0032;focusing | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
 
 Chrome Web Store Link: https://chromewebstore.google.com/detail/blocksite-pomodoro-block/jpiabnekfdohlhlkpcilboocofljiiml
 
