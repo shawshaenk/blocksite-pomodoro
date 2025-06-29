@@ -11,25 +11,25 @@
     <h2>Block Sites</h2>
     <form id="block-form">
         <input type="text" id="block-url-input" placeholder="Enter a web address (ex: youtube.com)" autocomplete="off">
-        <button type="submit">+</button>
+        <button class="site-list-button" type="submit"><span class="plus-symbol">+</span></button>
     </form>
     <div class="site-lists" id="blocked-sites"></div>
 
     <h2>Whitelist Sites</h2>
     <form id="whitelist-form">
         <input type="text" id="whitelist-url-input" placeholder="Enter a web address (ex: google.com)" autocomplete="off">
-        <button type="submit">+</button>
+        <button class="site-list-button" type="submit"><span class="plus-symbol">+</span></button>
     </form>
     <div class="site-lists" id="whitelisted-sites"></div>
 
     <h2>Exceptions</h2>
     <form id="exceptions-form">
         <input type="text" id="exceptions-url-input" placeholder="Enter a web address (ex: youtube.com/watch?v=dQw4w9WgXcQ)" autocomplete="off">
-        <button type="submit">+</button>
+        <button class="site-list-button" type="submit"><span class="plus-symbol">+</span></button>
     </form>
     <div class="site-lists" id="excepted-sites"></div>
     
-    <h2>Settings</h2>
+    <h1 id="settings-title">Settings and Timings</h1>
     <div class="toggle-block">
         <span class="tooltip">
             <span class="tooltip-icon">i</span>
@@ -56,7 +56,6 @@
         </label>
     </div>
 
-    <h2 id="timings-title">Customize Timings</h2>
     <form>
         <div id="timings">
             <div class="time-block">
@@ -74,7 +73,7 @@
         </div>
     </form>
 
-    <button id="apply-settings-button" type="button">Apply Settings</button>
+    <button id="apply-settings-button" type="button">Apply Settings and Timings</button>
 
     <script src="options.js"></script>
 </body>

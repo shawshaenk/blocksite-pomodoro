@@ -9,7 +9,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const blockSwitch = document.getElementById('block-switch');
     const whitelistSwitch = document.getElementById('whitelist-switch');
 
-    chrome.storage.local.get(['blockedUrls', 'whitelistedUrls', 'exceptedUrls', 'workTime', 'shortBreakTime', 'longBreakTime'], function(result) {
+    let strictBlocking;
+    let whitelistMode;
+    let workTime;
+    let shortBreakTime;
+    let longBreakTime;
+
+    chrome.storage.local.get(['blockedUrls', 'whitelistedUrls', 'exceptedUrls', 'workTime', 'shortBreakTime', 'longBreakTime', 'whitelistMode', 'strictBlocking'], function(result) {
         let blockedUrls = result.blockedUrls;
         for (let i = 0; i < blockedUrls.length; i++) {
             addBlockedSite(blockedUrls[i]);
@@ -28,6 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
         workValue.value = result.workTime / 60;
         shortBreakValue.value = result.shortBreakTime / 60;
         longBreakValue.value = result.longBreakTime / 60;
+
+        strictBlocking = result.strictBlocking;
+        whitelistMode = result.whitelistMode;
     });
 
     //Block Sites Code
@@ -209,40 +218,37 @@ document.addEventListener('DOMContentLoaded', () => {
     // Timings Customization Code
     workValue.addEventListener("blur", function() {
         chrome.storage.local.get('workTime', function(result) {
-            let workTime = result.workTime;
+            workTime = result.workTime;
             let value = workValue.value;
             if (value > 180 || value.includes('.') || value <= 0) {
                 workValue.value = 20;
                 value = 20;
             }
             workTime = value * 60;
-            chrome.storage.local.set({ workTime });
         });
     })
 
     shortBreakValue.addEventListener("blur", function() {
         chrome.storage.local.get('shortBreakTime', function(result) {
-            let shortBreakTime = result.shortBreakTime;
+            shortBreakTime = result.shortBreakTime;
             let value = shortBreakValue.value;
             if (value.includes('.') || value <= 0) {
                 shortBreakValue.value = 5;
                 value = 5;
             }
             shortBreakTime = value * 60;
-            chrome.storage.local.set({ shortBreakTime });
         });
     })
 
     longBreakValue.addEventListener("blur", function() {
         chrome.storage.local.get('longBreakTime', function(result) {
-            let longBreakTime = result.longBreakTime;
+            longBreakTime = result.longBreakTime;
             let value = longBreakValue.value;
             if (value.includes('.') || value <= 0) {
                 longBreakValue.value = 15;
                 value = 15;
             }
             longBreakTime = value * 60;
-            chrome.storage.local.set({ longBreakTime });
         });
     });
 
@@ -260,32 +266,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     blockSwitch.addEventListener('change', function() {
         if (this.checked) {
-            let strictBlocking = true;
-            chrome.storage.local.set({ strictBlocking });
+            strictBlocking = true;
         } else {
-            let strictBlocking = false;
-            chrome.storage.local.set({ strictBlocking });
+            strictBlocking = false;
         }
     });
 
     whitelistSwitch.addEventListener('change', function() {
         if (this.checked) {
-            let whitelistMode = true;
-            chrome.storage.local.set({ whitelistMode });
+            whitelistMode = true;
         } else {
-            let whitelistMode = false;
-            chrome.storage.local.set({ whitelistMode });
+            whitelistMode = false;
         }
     });
 
     document.getElementById("apply-settings-button").addEventListener("click", function () {
-        chrome.runtime.sendMessage({ action: "reset" });
-    
-        const button = this;
-        button.textContent = "Apply Settings  ✔";
-        setTimeout(() => {
-            button.textContent = "Apply Settings";
-        }, 2000);
+        chrome.storage.local.set({ strictBlocking, whitelistMode, workTime, shortBreakTime, longBreakTime }, () => {
+            chrome.runtime.sendMessage({ action: "reset" });
+            chrome.runtime.sendMessage({ action: "checkTabs" });
+        
+            const button = this;
+            button.textContent = "Apply Settings and Timings  ✔";
+            setTimeout(() => {
+                button.textContent = "Apply Settings and Timings";
+            }, 2000);
+        });
     });
 
     chrome.runtime.sendMessage({ action: 'checkTabs' });

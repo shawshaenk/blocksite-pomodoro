@@ -18,7 +18,7 @@ body {
 
 h1 {
     text-align: center;
-    font-size: 27px;
+    font-size: 30px;
 }
 
 h2 {
@@ -83,6 +83,16 @@ label {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+.site-list-button {
+    font-size: 12px; /* Controls button padding/font fallback */
+    padding: 7px 12px;
+}
+
+.site-list-button .plus-symbol {
+    font-size: 20px; /* Bigger symbol */
+    line-height: 1;
+}
+
 .blocked-site, .whitelisted-site, .excepted-site {
     display: flex;
     justify-content: space-between;
@@ -112,6 +122,7 @@ label {
 
 /* timings part */
 #timings {
+    margin-top: -12px;
     text-align: center;
 }
 
@@ -119,11 +130,6 @@ label {
     margin-top: -8px;
     margin-bottom: 8px;
     font-size: 14px;
-}
-
-#timings-title {
-    margin-top: 40px;
-    margin-bottom: -10px;
 }
 
 .timing-customization {
@@ -279,6 +285,12 @@ input:checked + .slider:before {
     font-size: 15px;
     padding-left: 10px;
     padding-right: 10px;
+    margin-top: 5px;
+}
+
+#settings-title {
+    margin-top: 50px;
+    margin-bottom: 3px;
 }
 
 #other-settings-info {
