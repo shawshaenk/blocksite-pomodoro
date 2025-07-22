@@ -109,7 +109,11 @@ function pauseTimer() {
 }
 
 function resetTimer() {
-    chrome.runtime.sendMessage({ action: 'reset' });
+    chrome.runtime.sendMessage({ action: 'reset' }, (response) => {
+        if (response && response.status === 'reset_complete') {
+            runTimer();
+        }
+    });
 }
 
 startPauseButton.addEventListener('click', function() {
@@ -122,9 +126,9 @@ startPauseButton.addEventListener('click', function() {
     });
     return true;
 });
+
 resetButton.addEventListener('click', () => {
     resetTimer();
-    runTimer();
 });
 
 document.querySelector('#options-button').addEventListener('click', function() {

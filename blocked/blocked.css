@@ -1,10 +1,10 @@
 @font-face{
-    font-family:'Inter-Bold';
-    src: url("../Inter-Bold.ttf");
+    font-family:'Inter-Medium';
+    src: url("../Inter-Medium.ttf");
 }
 
 #popup-container {
-    font-family: "Inter-Bold";
+    font-family: "Inter-Medium";
     color: white;
     text-align: center;
 }

@@ -114,7 +114,9 @@ chrome.runtime.onMessage.addListener((request, sendResponse) => {
                 } else {
                     blocking = true;
                 }
-                chrome.storage.local.set({ time, started, paused, working, blocking, cycle });
+                chrome.storage.local.set({ time, started, paused, working, blocking, cycle }, ()=> {
+                    sendResponse({ status: 'reset_complete' });
+                });
             }
         });
         return true;
@@ -264,10 +266,10 @@ chrome.runtime.onStartup.addListener(() => {
     initializeScript();
 });
 
-chrome.runtime.onInstalled.addListener(function (object) {
-    if (chrome.runtime.openOptionsPage) {
-        chrome.runtime.openOptionsPage();
-    } else {
-    window.open(chrome.runtime.getURL('options.html'));
-    }
-});
+// chrome.runtime.onInstalled.addListener(function (object) {
+//     if (chrome.runtime.openOptionsPage) {
+//         chrome.runtime.openOptionsPage();
+//     } else {
+//     window.open(chrome.runtime.getURL('options.html'));
+//     }
+// });
